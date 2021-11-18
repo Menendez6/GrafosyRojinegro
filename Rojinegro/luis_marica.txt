@@ -1,0 +1,137 @@
+def Eliminar(self,num):
+       	if self.Buscar(num)==False: #Comprobamos que el número se encuentra en el árbol
+            print("\nEl nodo que quieres borrar no se encuentra en el árbol")
+            return False
+        else:
+            n=self.Buscar(num)
+        if n.izq==None or n.dcha==None: 
+            y=n
+        else: #Cuando tenga nodos a izq y dcha se busca el sucesor que va a ser el más a la izquierda de los que están 
+              #a la derecha del nodo a borrar
+            y=n.dcha
+            while y.izq!=None:
+                y=y.izq
+        if y.izq!=None: #Si tiene hijos y, se crea una nueva variable que sea el nodo a unir, si no tiene guarda None
+            x=y.izq
+        else:
+            x=y.dcha
+        if x!=None:
+            x.padre=y.padre
+        if y.padre==None:
+            self.raiz=x
+        else: #Actualiza el hijo del padre de y
+            if y==y.padre.izq:
+                y.padre.izq=x
+            else:
+                y.padre.dcha=x
+        if y!=n:
+            n.clave=y.clave
+        if y.color==0 :
+            self.EliminarRN(x,y)
+    
+    def EliminarRN(self,x,y):#x es el hijo del nodo que hemos borrado
+        color_x=0
+        if x!=None:
+            if x.color==1:
+                x_color=1
+        while x!=self.raiz and color_x==0:
+            if x==None: #Si en la primera iteración x es nulo
+                padre=y.padre
+            else: padre=x.padre   
+            if x==padre.izq:
+                w=padre.dcha #hermano de x
+                color_w=0
+                color_w_izq=0
+                color_w_dcha=0
+                if w!=None:
+                    if w.color==1:
+                        color_w=1
+                    if w.izq!=None:
+                        if w.izq.color==1:
+                            color_w_izq=1
+                    if w.dcha!=None:
+                        if w.dcha.color==1:
+                            color_w_dcha=1
+                if color_w==1:
+                    w.color=0
+                    padre.color=1
+                    self.RotarIzqArbolBin(padre)
+                    w=padre.dcha #nuevo w, objetivo es conseguir un hermano negro para x
+                    if w!=None:
+                        if w.color==1:
+                            color_w=1
+                        if w.izq!=None:
+                            if w.izq.color==1:
+                                color_w_izq=1
+                        if w.dcha!=None:
+                            if w.dcha.color==1:
+                                color_w_dcha=1
+                if color_w_izq==0 and color_w_dcha==0:
+                    # Si el hermano de x y sus hijos son negros (o nulos), se sube un negro al padre y se le quita a los hijos (la x tiene doble negro)
+                    # Se repite el bucle con el padre
+                    if w!=None:
+                        w.color=1
+                    x=padre
+                else:
+                    if color_w_dcha==0:
+                        #Si w y su hijo derecho son negros pero el izquierdo no, cambiamos el color de w y del izquierdo y rotamos hacia la derecha
+                        w.izq.color=0
+                        w.color=1
+                        self.RotarDchaArbolBin(w)
+                        w=padre.dcha
+                    w.color=padre.color
+                    padre.color=0
+                    w.dcha.color=0
+                    self.RotarIzqArbolBin(padre)
+                    x=self.raiz
+            else:
+                w=padre.izq #hermano de x
+                color_w=0
+                color_w_izq=0
+                color_w_dcha=0
+                if w!=None:
+                    if w.color==1:
+                        color_w=1
+                    if w.izq!=None:
+                        if w.izq.color==1:
+                            color_w_izq=1
+                    if w.dcha!=None:
+                        if w.dcha.color==1:
+                            color_w_dcha=1
+                if color_w==1:
+                    w.color=0
+                    padre.color=1
+                    self.RotarDchaArbolBin(x.padre)
+                    w=padre.izq #nuevo w, objetivo es conseguir un hermano negro para x
+                    if w!=None:
+                        if w.color==1:
+                            color_w=1
+                        if w.izq!=None:
+                            if w.izq.color==1:
+                                color_w_izq=1
+                        if w.dcha!=None:
+                            if w.dcha.color==1:
+                                color_w_dcha=1
+                if color_w_izq==0 and color_w_dcha==0:
+                    print("Hola")
+                    # Si el hermano de x y sus hijos son negros (o nulos), se sube un negro al padre y se le quita a los hijos (la x tiene doble negro)
+                    # Se repite el bucle con el padre
+                    if w!=None:
+                        w.color=1
+                    x=padre
+                else:
+                    if color_w_izq==0:
+                        #Si w y su hijo izquierdo son negros pero el derecho no, cambiamos el color de w y del izquierdo y rotamos hacia la derecha
+                        w.dcha.color=0
+                        w.color=1
+                        self.RotarIzqArbolBin(w)
+                        w=padre.izq
+                    w.color=padre.color
+                    padre.color=0
+                    w.izq.color=0
+                    self.RotarDchaArbolBin(padre)
+                    x=self.raiz
+                    
+        if x!=None:
+            x.color=0            
+            
